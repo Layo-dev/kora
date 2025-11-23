@@ -12,7 +12,7 @@ export const ProfileCard = ({ name, age, image, isOnline, onClick }: ProfileCard
   return (
     <div
       onClick={onClick}
-      className="bg-card rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200 shadow-sm"
+      className="bg-white rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200 shadow-md border-l-4 border-jonquil"
     >
       <div className="relative aspect-[3/4]">
         <img
