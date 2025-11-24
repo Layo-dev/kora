@@ -54,7 +54,6 @@ export default {
         verified: "hsl(var(--verified-badge))",
         online: "hsl(var(--online-indicator))",
         "activity-low": "hsl(var(--activity-low))",
-        jonquil: "hsl(var(--jonquil))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
