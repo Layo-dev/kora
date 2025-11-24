@@ -136,17 +136,21 @@ export const SwipeCard = ({ profile, onSwipe, style }: SwipeCardProps) => {
       {/* Expanded View - Full Details */}
       {isExpanded && (
         <div className="absolute inset-0 overflow-y-auto bg-background">
-          {/* Image at top with gradient overlay */}
+          {/* Image at top - clean, no overlay */}
           <div className="relative h-96 flex-shrink-0">
             <img
               src={profile.image}
               alt={profile.name}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4">
+          </div>
+
+          {/* Scrollable content below image */}
+          <div className="bg-background p-6 space-y-6">
+            {/* Header Info */}
+            <div>
               <div className="flex items-center gap-2 mb-2">
-                <h2 className="text-white text-3xl font-bold">
+                <h2 className="text-foreground text-3xl font-bold">
                   {profile.name}, {profile.age}
                 </h2>
                 {profile.verified && (
@@ -159,15 +163,12 @@ export const SwipeCard = ({ profile, onSwipe, style }: SwipeCardProps) => {
                 )}
               </div>
               {profile.relationshipGoal && (
-                <Badge className="bg-white/20 text-white border-0 backdrop-blur-sm">
+                <Badge className="bg-purple-100 text-purple-900 border-0">
                   {profile.relationshipGoal}
                 </Badge>
               )}
             </div>
-          </div>
 
-          {/* Scrollable content below image */}
-          <div className="bg-background p-6 space-y-6">
             {/* About Me */}
             {profile.aboutMe && (
               <div>
