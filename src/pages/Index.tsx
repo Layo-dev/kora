@@ -2,21 +2,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { ProfileCard } from "@/components/ProfileCard";
 import { Zap, Settings, Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import profile1 from "@/assets/profile-1.jpg";
-import profile2 from "@/assets/profile-2.jpg";
-import profile3 from "@/assets/profile-3.jpg";
-import profile4 from "@/assets/profile-4.jpg";
-import profile5 from "@/assets/profile-5.jpg";
-import profile6 from "@/assets/profile-6.jpg";
-
-const profiles = [
-  { id: 1, name: "Vicki", age: 27, image: profile1, isOnline: true },
-  { id: 2, name: "Jennifer", age: 24, image: profile2, isOnline: false },
-  { id: 3, name: "Mirable", age: 26, image: profile3, isOnline: false },
-  { id: 4, name: "Anita", age: 25, image: profile4, isOnline: false },
-  { id: 5, name: "Gift", age: 30, image: profile5, isOnline: false },
-  { id: 6, name: "Princess", age: 26, image: profile6, isOnline: true },
-];
+import { profiles } from "@/data/profiles";
 
 const Index = () => {
   return (
