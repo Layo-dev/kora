@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { SwipeCard } from "@/components/SwipeCard";
-import { SwipeActions } from "@/components/SwipeActions";
 import { profiles } from "@/data/profiles";
 import { Zap, SlidersHorizontal } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -37,8 +36,8 @@ const Encounters = () => {
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Encounters</h1>
           <div className="flex items-center gap-3">
-            <button className="p-2 hover:bg-accent rounded-full transition-colors">
-              <Zap className="w-5 h-5 text-primary" />
+            <button className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity">
+              <Zap className="w-5 h-5 text-primary-foreground" />
             </button>
             <button className="p-2 hover:bg-accent rounded-full transition-colors">
               <SlidersHorizontal className="w-5 h-5 text-foreground" />
@@ -47,7 +46,7 @@ const Encounters = () => {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto relative h-[calc(100vh-12rem)]">
+      <main className="max-w-lg mx-auto relative h-[calc(100vh-10rem)]">
         {currentIndex >= profiles.length ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-muted-foreground text-center text-lg">
@@ -59,7 +58,7 @@ const Encounters = () => {
           <>
             {/* Background card (next profile) */}
             {nextProfile && (
-              <div className="absolute inset-4 top-20 bottom-32 bg-card rounded-3xl overflow-hidden shadow-lg opacity-50 scale-95">
+              <div className="absolute inset-4 top-8 bottom-8 bg-card rounded-3xl overflow-hidden shadow-lg opacity-50 scale-95">
                 <img
                   src={nextProfile.image}
                   alt={nextProfile.name}
@@ -76,11 +75,6 @@ const Encounters = () => {
                 onSwipe={handleSwipe}
               />
             )}
-
-            <SwipeActions
-              onReject={() => handleSwipe("left")}
-              onLike={() => handleSwipe("right")}
-            />
           </>
         )}
       </main>

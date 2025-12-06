@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Check, MapPin, Briefcase, Heart, GraduationCap } from "lucide-react";
+import { Check, MapPin, Heart, GraduationCap, MoreHorizontal, X } from "lucide-react";
 import { ProfileInfoBadge } from "./ProfileInfoBadge";
 import { cn } from "@/lib/utils";
 
@@ -67,6 +67,16 @@ export const SwipeCard = ({ profile, onSwipe, style }: SwipeCardProps) => {
     setIsDragging(false);
   };
 
+  const handleReject = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSwipe("left");
+  };
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSwipe("right");
+  };
+
   const rotation = dragOffset.x * 0.1;
   const opacity = 1 - Math.abs(dragOffset.x) / 300;
 
@@ -74,7 +84,7 @@ export const SwipeCard = ({ profile, onSwipe, style }: SwipeCardProps) => {
     <div
       ref={cardRef}
       className={cn(
-        "absolute inset-4 top-20 bottom-32 bg-card rounded-3xl overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing transition-transform",
+        "absolute inset-4 top-8 bottom-8 bg-card rounded-3xl overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing transition-transform",
         isDragging ? "transition-none" : "transition-all duration-300"
       )}
       style={{
@@ -109,28 +119,58 @@ export const SwipeCard = ({ profile, onSwipe, style }: SwipeCardProps) => {
         </div>
       )}
 
-      {/* Compact View - Bottom Overlay */}
+      {/* Compact View - Top Overlay with Name & Actions at Bottom */}
       {!isExpanded && (
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
-          <div className="flex items-center gap-2 mb-2">
-            <h2 className="text-white text-3xl font-bold">
-              {profile.name}, {profile.age}
-            </h2>
-            {profile.verified && (
-              <div className="w-7 h-7 rounded-full bg-verified flex items-center justify-center">
-                <Check className="w-4 h-4 text-white" />
-              </div>
-            )}
-            {profile.isOnline && (
-              <div className="w-3 h-3 rounded-full bg-online border-2 border-white" />
-            )}
+        <>
+          {/* Top gradient for text visibility */}
+          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/60 to-transparent" />
+          
+          {/* Top Left - Name, Age, Relationship Goal */}
+          <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+            <div>
+              <h2 className="text-accent text-2xl font-bold drop-shadow-lg">
+                {profile.name}, {profile.age}
+              </h2>
+              {profile.relationshipGoal && (
+                <div className="flex items-center gap-1.5 mt-1">
+                  <div className="w-5 h-5 rounded-full bg-black/60 flex items-center justify-center">
+                    <Heart className="w-3 h-3 text-pink-400" fill="currentColor" />
+                  </div>
+                  <span className="text-white text-sm font-medium drop-shadow-lg">
+                    {profile.relationshipGoal}
+                  </span>
+                </div>
+              )}
+            </div>
+            
+            {/* Top Right - Menu Icon */}
+            <button 
+              className="p-2"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontal className="w-6 h-6 text-white drop-shadow-lg" />
+            </button>
           </div>
-          {profile.relationshipGoal && (
-            <Badge className="bg-white/20 text-white border-0 backdrop-blur-sm w-fit">
-              {profile.relationshipGoal}
-            </Badge>
-          )}
-        </div>
+
+          {/* Bottom - Action Buttons */}
+          <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-6">
+            <button
+              onClick={handleReject}
+              className="w-14 h-14 rounded-full bg-black/70 backdrop-blur-sm flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+              aria-label="Pass"
+            >
+              <X className="w-7 h-7 text-white" strokeWidth={2.5} />
+            </button>
+            
+            <button
+              onClick={handleLike}
+              className="w-14 h-14 rounded-full bg-black/70 backdrop-blur-sm flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+              aria-label="Like"
+            >
+              <Heart className="w-7 h-7 text-white" fill="white" strokeWidth={0} />
+            </button>
+          </div>
+        </>
       )}
 
       {/* Expanded View - Full Details */}
