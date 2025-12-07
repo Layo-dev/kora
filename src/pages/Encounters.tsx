@@ -36,7 +36,7 @@ const Encounters = () => {
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Encounters</h1>
           <div className="flex items-center gap-3">
-            <button className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity">
+            <button className="w-8 h-8 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity">
               <Zap className="w-5 h-5 text-primary-foreground" />
             </button>
             <button className="p-2 hover:bg-accent rounded-full transition-colors">
