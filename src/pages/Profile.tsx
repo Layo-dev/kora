@@ -1,5 +1,5 @@
 import { BottomNav } from "@/components/BottomNav";
-import { Settings, Edit, CheckCircle2, ChevronRight, Activity, Coins } from "lucide-react";
+import { Settings, Edit, CheckCircle2, ChevronRight, Activity, Coins, Shield, BadgeCheck, EyeOff, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import profileUser from "@/assets/profile-user.jpg";
@@ -93,8 +93,63 @@ const Profile = () => {
           </TabsContent>
 
           <TabsContent value="safety">
-            <div className="bg-card rounded-2xl p-6 text-center shadow-sm">
-              <p className="text-muted-foreground">Safety features and settings</p>
+            <div className="space-y-2">
+              {/* Get help */}
+              <div className="bg-card rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-violet-500 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="font-semibold text-foreground">Get help from Badoo</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </div>
+              </div>
+
+              {/* Verify your profile */}
+              <div className="bg-card rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                      <BadgeCheck className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <span className="font-semibold text-foreground block">Verify your profile</span>
+                      <span className="text-sm text-muted-foreground">Let everyone know you're real</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </div>
+              </div>
+
+              {/* Turn on invisible mode */}
+              <div className="bg-card rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <EyeOff className="w-6 h-6 text-muted-foreground" />
+                    <div>
+                      <span className="font-semibold text-foreground block">Turn on invisible mode</span>
+                      <span className="text-sm text-muted-foreground">Go invisible to browse privately</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </div>
+              </div>
+
+              {/* Manage your privacy */}
+              <div className="bg-card rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Lock className="w-6 h-6 text-muted-foreground" />
+                    <div>
+                      <span className="font-semibold text-foreground block">Manage your privacy</span>
+                      <span className="text-sm text-muted-foreground">Choose what information you share</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
