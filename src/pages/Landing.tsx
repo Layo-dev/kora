@@ -11,19 +11,19 @@ import profile6 from "@/assets/profile-6.jpg";
 const Landing = () => {
   return (
     <div className="min-h-screen bg-background">
+      {/* Navbar */}
+      <nav className="bg-white py-4 px-6 shadow-sm">
+        <div className="container mx-auto">
+          <span className="text-2xl font-rounded font-extrabold text-rose-500 lowercase">kora</span>
+        </div>
+      </nav>
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden bg-violet-50">
         <div className="container mx-auto px-6 py-12 lg:py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="space-y-8">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-primary-foreground" fill="currentColor" />
-                </div>
-                <span className="text-2xl font-bold text-foreground">Kora</span>
-              </div>
-              
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
                 <span className="text-rose-500">Date with</span>
                 <br />
