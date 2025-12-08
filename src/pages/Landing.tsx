@@ -24,7 +24,7 @@ const Landing = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="space-y-8">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight">
                 <span className="text-rose-500">Date with</span>
                 <br />
                 <span className="text-rose-500">confidence</span>
