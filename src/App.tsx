@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import Encounters from "./pages/Encounters";
 import Likes from "./pages/Likes";
 import Chats from "./pages/Chats";
+import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,7 +20,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/app" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/encounters" element={<Encounters />} />
           <Route path="/likes" element={<Likes />} />
