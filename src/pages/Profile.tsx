@@ -101,7 +101,7 @@ const Profile = () => {
                     <div className="w-10 h-10 rounded-full bg-violet-500 flex items-center justify-center">
                       <Shield className="w-5 h-5 text-white" />
                     </div>
-                    <span className="font-semibold text-foreground">Get help from Badoo</span>
+                    <span className="font-semibold text-foreground">Get help from Kora</span>
                   </div>
                   <ChevronRight className="w-5 h-5 text-muted-foreground" />
                 </div>
