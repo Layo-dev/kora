@@ -24,7 +24,7 @@ const Landing = () => {
                 <span className="text-2xl font-bold text-foreground">Kora</span>
               </div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
                 <span className="text-rose-500">Date with</span>
                 <br />
                 <span className="text-rose-500">confidence</span>
