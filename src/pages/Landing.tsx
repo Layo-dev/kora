@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Heart, Mail, ChevronRight, Globe } from "lucide-react";
+import { Heart, Mail, ChevronRight, Globe, Facebook, Linkedin, Instagram, Twitter } from "lucide-react";
 import { Link } from "react-router-dom";
 import profile1 from "@/assets/profile-1.jpg";
 import profile2 from "@/assets/profile-2.jpg";
@@ -291,7 +291,7 @@ const Landing = () => {
       {/* Footer */}
       <footer className="py-16 bg-primary-foreground text-primary">
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
@@ -332,6 +332,24 @@ const Landing = () => {
                 <li><Link to="#" className="hover:text-background">Cookie Policy</Link></li>
                 <li><Link to="#" className="hover:text-background">Community Guidelines</Link></li>
               </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Follow us</h4>
+              <div className="flex items-center gap-3">
+                <a href="#" className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:opacity-80 transition-opacity">
+                  <Facebook className="w-5 h-5 text-primary-foreground" />
+                </a>
+                <a href="#" className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:opacity-80 transition-opacity">
+                  <Linkedin className="w-5 h-5 text-primary-foreground" />
+                </a>
+                <a href="#" className="w-10 h-10 border-2 border-primary rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a href="#" className="w-10 h-10 border-2 border-primary rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+                  <Twitter className="w-5 h-5" />
+                </a>
+              </div>
             </div>
           </div>
           
