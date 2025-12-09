@@ -33,10 +33,12 @@ const Landing = () => {
               </p>
               
               <div className="space-y-3 max-w-sm">
-                <Button className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-full gap-2">
-                  <Mail className="w-5 h-5" />
-                  Sign up with email
-                </Button>
+                <Link to="/auth">
+                  <Button className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-full gap-2">
+                    <Mail className="w-5 h-5" />
+                    Sign up with email
+                  </Button>
+                </Link>
                 <Button variant="outline" className="w-full h-12 rounded-full gap-2 border-border">
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -105,9 +107,11 @@ const Landing = () => {
               <p className="text-muted-foreground">
                 From verified profiles to our unique matching algorithm, every feature is designed to help you put your best foot forward.
               </p>
-              <Button className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-8 h-12">
-                Sign up
-              </Button>
+              <Link to="/auth">
+                <Button className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-8 h-12">
+                  Sign up
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -189,9 +193,11 @@ const Landing = () => {
               <p className="text-muted-foreground">
                 Our dating intentions feature helps you connect with people who are on the same page, saving time and avoiding awkward conversations.
               </p>
-              <Button className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-8 h-12">
-                Get started
-              </Button>
+              <Link to="/auth">
+                <Button className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-8 h-12">
+                  Get started
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -236,9 +242,11 @@ const Landing = () => {
               <ChevronRight className="w-4 h-4" />
             </Link>
             <div>
-              <Button className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-8 h-12">
-                Sign up
-              </Button>
+              <Link to="/auth">
+                <Button className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-8 h-12">
+                  Sign up
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
