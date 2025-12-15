@@ -10,6 +10,7 @@ import Likes from "./pages/Likes";
 import Chats from "./pages/Chats";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/app" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/encounters" element={<Encounters />} />

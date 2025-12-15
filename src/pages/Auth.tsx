@@ -35,6 +35,20 @@ const Auth = () => {
     setView("password");
   };
 
+  const checkOnboardingAndRedirect = async (userId: string) => {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('onboarding_complete')
+      .eq('id', userId)
+      .maybeSingle();
+    
+    if (profile?.onboarding_complete) {
+      navigate("/app");
+    } else {
+      navigate("/onboarding");
+    }
+  };
+
   const handleSubmit = async () => {
     const passwordResult = passwordSchema.safeParse(password);
     if (!passwordResult.success) {
@@ -49,8 +63,8 @@ const Auth = () => {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const redirectUrl = `${window.location.origin}/app`;
-        const { error } = await supabase.auth.signUp({
+        const redirectUrl = `${window.location.origin}/onboarding`;
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -58,17 +72,27 @@ const Auth = () => {
           },
         });
         if (error) throw error;
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account.",
-        });
+        
+        // If email confirmation is disabled, redirect to onboarding
+        if (data.user && data.session) {
+          navigate("/onboarding");
+        } else {
+          toast({
+            title: "Account created!",
+            description: "Please check your email to verify your account.",
+          });
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
-        navigate("/app");
+        
+        // Check if onboarding is complete
+        if (data.user) {
+          await checkOnboardingAndRedirect(data.user.id);
+        }
       }
     } catch (error: any) {
       toast({
@@ -87,7 +111,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/app`,
+          redirectTo: `${window.location.origin}/onboarding`,
         },
       });
       if (error) throw error;
