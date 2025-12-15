@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Encounters from "./pages/Encounters";
@@ -15,24 +17,232 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+type SessionState = {
+  loading: boolean;
+  userId: string | null;
+  onboardingComplete: boolean | null;
+};
+
+const useSession = (): SessionState => {
+  const [state, setState] = useState<SessionState>({
+    loading: true,
+    userId: null,
+    onboardingComplete: null,
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    const loadSession = async () => {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (!active) return;
+
+      if (error || !data.user) {
+        setState({
+          loading: false,
+          userId: null,
+          onboardingComplete: null,
+        });
+        return;
+      }
+
+      const userId = data.user.id;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_complete")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (!active) return;
+
+      setState({
+        loading: false,
+        userId,
+        onboardingComplete: profile?.onboarding_complete ?? false,
+      });
+    };
+
+    loadSession();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return state;
+};
+
+const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+  const { loading, userId, onboardingComplete } = useSession();
+
+  useEffect(() => {
+    if (loading) return;
+    if (userId) {
+      if (onboardingComplete) {
+        navigate("/encounters", { replace: true });
+      } else {
+        navigate("/onboarding", { replace: true });
+      }
+    }
+  }, [loading, userId, onboardingComplete, navigate]);
+
+  if (loading) return null;
+  if (userId) return null; // redirecting
+
+  return <>{children}</>;
+};
+
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+  const { loading, userId } = useSession();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!userId) {
+      navigate("/landing", { replace: true });
+    }
+  }, [loading, userId, navigate]);
+
+  if (loading || !userId) return null;
+
+  return <>{children}</>;
+};
+
+const OnboardingGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+  const { loading, onboardingComplete } = useSession();
+
+  useEffect(() => {
+    if (loading) return;
+    if (onboardingComplete === false) {
+      navigate("/onboarding", { replace: true });
+    }
+  }, [loading, onboardingComplete, navigate]);
+
+  if (loading) return null;
+  if (onboardingComplete === false) return null; // redirecting
+
+  return <>{children}</>;
+};
+
+const AppRoutes = () => (
+  <Routes>
+    {/* GUEST LANDING: always Landing for guests */}
+    <Route
+      path="/"
+      element={
+        <PublicRoute>
+          <Landing />
+        </PublicRoute>
+      }
+    />
+    <Route
+      path="/landing"
+      element={
+        <PublicRoute>
+          <Landing />
+        </PublicRoute>
+      }
+    />
+
+    {/* AUTH: public-only */}
+    <Route
+      path="/auth"
+      element={
+        <PublicRoute>
+          <Auth />
+        </PublicRoute>
+      }
+    />
+
+    {/* ONBOARDING: logged-in only */}
+    <Route
+      path="/onboarding"
+      element={
+        <ProtectedRoute>
+          <Onboarding />
+        </ProtectedRoute>
+      }
+    />
+
+    {/* APP: logged-in + completed profile */}
+    <Route
+      path="/"
+      element={
+        <ProtectedRoute>
+          <OnboardingGuard>
+            <Profile />
+          </OnboardingGuard>
+        </ProtectedRoute>
+      }
+      />
+
+    <Route
+      path="/encounters"
+      element={
+        <ProtectedRoute>
+          <OnboardingGuard>
+            <Encounters />
+          </OnboardingGuard>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/likes"
+      element={
+        <ProtectedRoute>
+          <OnboardingGuard>
+            <Likes />
+          </OnboardingGuard>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/chats"
+      element={
+        <ProtectedRoute>
+          <OnboardingGuard>
+            <Chats />
+          </OnboardingGuard>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/profile"
+      element={
+        <ProtectedRoute>
+          <OnboardingGuard>
+            <Profile />
+          </OnboardingGuard>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/app"
+      element={
+        <ProtectedRoute>
+          <OnboardingGuard>
+            <Index />
+          </OnboardingGuard>
+        </ProtectedRoute>
+      }
+    />
+
+    {/* 404 */}
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/app" element={<Index />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/encounters" element={<Encounters />} />
-          <Route path="/likes" element={<Likes />} />
-          <Route path="/chats" element={<Chats />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AppRoutes />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
