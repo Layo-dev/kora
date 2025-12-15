@@ -1,10 +1,84 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BottomNav } from "@/components/BottomNav";
 import { Settings, Edit, CheckCircle2, ChevronRight, Activity, Coins, Shield, BadgeCheck, EyeOff, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import profileUser from "@/assets/profile-user.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { Tables } from "@/integrations/supabase/types";
+import { toast } from "@/hooks/use-toast";
+import chatIcon from "@/assets/chat-Icon.svg";
+import relationshipIcon from "@/assets/relationship-icon.svg";
+
+type ProfileRow = Tables<"profiles">;
+
+const intentMeta: Record<string, { icon: string; label: string }> = {
+  dating: { icon: relationshipIcon, label: "Here to date" },
+  chat: { icon: chatIcon, label: "Open to chat" },
+  relationship: { icon: relationshipIcon, label: "Ready for a relationship" },
+};
+const defaultIntent = intentMeta.dating;
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<ProfileRow | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProfile = async () => {
+      setIsLoading(true);
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+
+      if (userError) {
+        toast({
+          title: "Session error",
+          description: userError.message,
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (!userData.user) {
+        navigate("/auth");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userData.user.id)
+        .maybeSingle();
+
+      if (!isMounted) return;
+
+      if (error) {
+        toast({
+          title: "Couldn't load profile",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        setProfile(data);
+      }
+
+      setIsLoading(false);
+    };
+
+    fetchProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]);
+
+  const currentIntent =
+    profile?.intent && intentMeta[profile.intent] ? intentMeta[profile.intent] : defaultIntent;
+  const displayName = profile?.full_name ?? "Donald";
+  const displayAge = profile?.age ?? 25;
+
   return (
     <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-40">
@@ -29,7 +103,7 @@ const Profile = () => {
           <div className="relative">
             <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-card">
               <img
-                src={profileUser}
+                src={profile?.avatar_url ?? profileUser}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -39,10 +113,20 @@ const Profile = () => {
             </div>
           </div>
           <div className="flex-1 pt-2">
-            <h2 className="text-2xl font-bold text-foreground mb-1">Donald, 25</h2>
-            <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <span className="text-foreground">☕</span> Here to date
-            </p>
+            <h2 className="text-2xl font-bold text-foreground mb-1">
+              {displayName}, {displayAge}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-sm font-semibold text-foreground">
+               <img
+                 src={currentIntent.icon}
+                 alt=""
+                 className="h-4 w-4"
+                 aria-hidden="true"
+                />
+                <span>{isLoading ? "Loading profile..." : currentIntent.label}</span>
+              </span>
+           </p>
           </div>
         </div>
 
