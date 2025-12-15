@@ -73,8 +73,19 @@ const Auth = () => {
         });
         if (error) throw error;
         
-        // If email confirmation is disabled, redirect to onboarding
+        // If email confirmation is disabled, create initial profile and redirect to onboarding
         if (data.user && data.session) {
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .upsert(
+              { id: data.user.id, onboarding_complete: false },
+              { onConflict: "id" }
+            );
+
+          if (profileError) {
+            console.error("Error creating initial profile:", profileError);
+          }
+
           navigate("/onboarding");
         } else {
           toast({
