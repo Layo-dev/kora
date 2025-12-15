@@ -14,7 +14,227 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          liked_id: string | null
+          liker_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          liked_id?: string | null
+          liker_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          liked_id?: string | null
+          liker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_liked_id_fkey"
+            columns: ["liked_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_liker_id_fkey"
+            columns: ["liker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches: {
+        Row: {
+          created_at: string | null
+          id: string
+          user1: string | null
+          user2: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user1?: string | null
+          user2?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user1?: string | null
+          user2?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_user1_fkey"
+            columns: ["user1"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user2_fkey"
+            columns: ["user2"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          match_id: string | null
+          sender_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          match_id?: string | null
+          sender_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          match_id?: string | null
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photos: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_primary: boolean | null
+          photo_url: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          photo_url: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          photo_url?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          age: number | null
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          full_name: string | null
+          gender: string | null
+          id: string
+          interests: string[] | null
+          location: string | null
+          username: string | null
+        }
+        Insert: {
+          age?: number | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          gender?: string | null
+          id: string
+          interests?: string[] | null
+          location?: string | null
+          username?: string | null
+        }
+        Update: {
+          age?: number | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          gender?: string | null
+          id?: string
+          interests?: string[] | null
+          location?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string | null
+          id: string
+          reason: string | null
+          reported_id: string | null
+          reporter_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          reported_id?: string | null
+          reporter_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          reported_id?: string | null
+          reporter_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_reported_id_fkey"
+            columns: ["reported_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
