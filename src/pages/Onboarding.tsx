@@ -56,15 +56,29 @@ export default function Onboarding() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const initOnboarding = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate("/auth");
         return;
       }
+
       setUserId(user.id);
+
+      // Ensure a profile row exists for this user with onboarding incomplete
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .upsert(
+          { id: user.id, onboarding_complete: false },
+          { onConflict: "id" }
+        );
+
+      if (profileError) {
+        console.error("Error ensuring profile exists:", profileError);
+      }
     };
-    checkAuth();
+
+    initOnboarding();
   }, [navigate]);
 
   const calculateAge = (birthDate: string): number => {
