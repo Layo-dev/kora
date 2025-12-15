@@ -259,7 +259,7 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/app"
+      path="/nearby"
       element={
         <ProtectedRoute>
           <OnboardingGuard>
