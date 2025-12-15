@@ -20,7 +20,7 @@ const queryClient = new QueryClient();
 type SessionState = {
   loading: boolean;
   userId: string | null;
-  onboardingComplete: boolean | null;
+  onboardingComplete: boolean | null; // acts as is_completed flag
 };
 
 const useSession = (): SessionState => {
@@ -74,24 +74,38 @@ const useSession = (): SessionState => {
   return state;
 };
 
-const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// Landing: guests + logged-in (both complete and incomplete) can hit it,
+// but completed users get redirected to /encounters as their default.
+const LandingRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const { loading, userId, onboardingComplete } = useSession();
 
   useEffect(() => {
     if (loading) return;
-    if (userId) {
-      if (onboardingComplete) {
-        navigate("/encounters", { replace: true });
-      } else {
-        navigate("/onboarding", { replace: true });
-      }
+    // Logged-in + completed profile: default page is /encounters
+    if (userId && onboardingComplete) {
+      navigate("/encounters", { replace: true });
     }
   }, [loading, userId, onboardingComplete, navigate]);
 
   if (loading) return null;
-  if (userId) return null; // redirecting
+  return <>{children}</>;
+};
 
+// Auth: guests and logged-in-but-incomplete can see it;
+// logged-in + completed profile should NOT see /auth and go to /encounters.
+const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+  const { loading, userId, onboardingComplete } = useSession();
+
+  useEffect(() => {
+    if (loading) return;
+    if (userId && onboardingComplete) {
+      navigate("/encounters", { replace: true });
+    }
+  }, [loading, userId, onboardingComplete, navigate]);
+
+  if (loading) return null;
   return <>{children}</>;
 };
 
@@ -128,58 +142,82 @@ const OnboardingGuard: React.FC<{ children: React.ReactNode }> = ({ children }) 
   return <>{children}</>;
 };
 
+// Onboarding route: only for logged-in users with incomplete profile.
+const OnboardingRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+  const { loading, userId, onboardingComplete } = useSession();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!userId) {
+      // Guest hitting onboarding → send to auth.
+      navigate("/auth", { replace: true });
+      return;
+    }
+    if (onboardingComplete) {
+      // Completed profile shouldn't stay on onboarding.
+      navigate("/encounters", { replace: true });
+    }
+  }, [loading, userId, onboardingComplete, navigate]);
+
+  if (loading) return null;
+  if (!userId || onboardingComplete) return null;
+
+  return <>{children}</>;
+};
+
 const AppRoutes = () => (
   <Routes>
-    {/* GUEST LANDING: always Landing for guests */}
+    {/* DEFAULT / LANDING
+        Guests → Landing
+        Logged-in incomplete → Landing (can stay here)
+        Logged-in complete → redirected to /encounters
+    */}
     <Route
       path="/"
       element={
-        <PublicRoute>
+        <LandingRoute>
           <Landing />
-        </PublicRoute>
+        </LandingRoute>
       }
     />
     <Route
       path="/landing"
       element={
-        <PublicRoute>
+        <LandingRoute>
           <Landing />
-        </PublicRoute>
+        </LandingRoute>
       }
     />
 
-    {/* AUTH: public-only */}
+    {/* AUTH
+        Guests + logged-in incomplete allowed
+        Logged-in complete → redirected to /encounters
+    */}
     <Route
       path="/auth"
       element={
-        <PublicRoute>
+        <AuthRoute>
           <Auth />
-        </PublicRoute>
+        </AuthRoute>
       }
     />
 
-    {/* ONBOARDING: logged-in only */}
+    {/* ONBOARDING
+        Logged-in incomplete only
+        Guests → /auth
+        Logged-in complete → /encounters
+    */}
     <Route
       path="/onboarding"
       element={
-        <ProtectedRoute>
+        <OnboardingRoute>
           <Onboarding />
-        </ProtectedRoute>
+        </OnboardingRoute>
       }
     />
 
-    {/* APP: logged-in + completed profile */}
-    <Route
-      path="/"
-      element={
-        <ProtectedRoute>
-          <OnboardingGuard>
-            <Profile />
-          </OnboardingGuard>
-        </ProtectedRoute>
-      }
-      />
-
+    {/* APP: logged-in + completed profile only */}
     <Route
       path="/encounters"
       element={
