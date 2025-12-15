@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
-import Index from "./pages/Index";
+import Nearby from "./pages/Nearby";
 import Profile from "./pages/Profile";
 import Encounters from "./pages/Encounters";
 import Likes from "./pages/Likes";
@@ -263,7 +263,7 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute>
           <OnboardingGuard>
-            <Index />
+            <Nearby />
           </OnboardingGuard>
         </ProtectedRoute>
       }

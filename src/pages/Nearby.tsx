@@ -4,7 +4,7 @@ import { Zap, Settings, Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { profiles } from "@/data/profiles";
 
-const Index = () => {
+const Nearby = () => {
   return (
     <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-40">
@@ -50,4 +50,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Nearby;
