@@ -166,8 +166,10 @@ export type Database = {
           full_name: string | null
           gender: string | null
           id: string
+          intent: string | null
           interests: string[] | null
           location: string | null
+          onboarding_complete: boolean | null
           username: string | null
         }
         Insert: {
@@ -178,8 +180,10 @@ export type Database = {
           full_name?: string | null
           gender?: string | null
           id: string
+          intent?: string | null
           interests?: string[] | null
           location?: string | null
+          onboarding_complete?: boolean | null
           username?: string | null
         }
         Update: {
@@ -190,8 +194,10 @@ export type Database = {
           full_name?: string | null
           gender?: string | null
           id?: string
+          intent?: string | null
           interests?: string[] | null
           location?: string | null
+          onboarding_complete?: boolean | null
           username?: string | null
         }
         Relationships: []
