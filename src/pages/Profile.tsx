@@ -23,13 +23,11 @@ const defaultIntent = intentMeta.dating;
 const Profile = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileRow | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchProfile = async () => {
-      setIsLoading(true);
       const { data: userData, error: userError } = await supabase.auth.getUser();
 
       if (userError) {
@@ -38,7 +36,6 @@ const Profile = () => {
           description: userError.message,
           variant: "destructive",
         });
-        setIsLoading(false);
         return;
       }
 
@@ -65,7 +62,6 @@ const Profile = () => {
         setProfile(data);
       }
 
-      setIsLoading(false);
     };
 
     fetchProfile();
@@ -74,10 +70,9 @@ const Profile = () => {
     };
   }, [navigate]);
 
-  const currentIntent =
-    profile?.intent && intentMeta[profile.intent] ? intentMeta[profile.intent] : defaultIntent;
-  const displayName = profile?.full_name ?? "Donald";
-  const displayAge = profile?.age ?? 25;
+  if (!profile) return null;
+
+  const currentIntent = profile.intent && intentMeta[profile.intent] ? intentMeta[profile.intent] : defaultIntent;
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -114,7 +109,7 @@ const Profile = () => {
           </div>
           <div className="flex-1 pt-2">
             <h2 className="text-2xl font-bold text-foreground mb-1">
-              {displayName}, {displayAge}
+              {profile.full_name}{profile.age ? `, ${profile.age}` : ""}
             </h2>
             <p className="text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-sm font-semibold text-foreground">
@@ -124,7 +119,7 @@ const Profile = () => {
                  className="h-4 w-4"
                  aria-hidden="true"
                 />
-                <span>{isLoading ? "Loading profile..." : currentIntent.label}</span>
+                <span>{currentIntent.label}</span>
               </span>
            </p>
           </div>
