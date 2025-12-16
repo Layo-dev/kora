@@ -3,8 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { Check, MapPin, Heart, GraduationCap, MoreHorizontal, X } from "lucide-react";
 import { ProfileInfoBadge } from "./ProfileInfoBadge";
 import { cn } from "@/lib/utils";
+
 interface Profile {
-  id: number;
+  id: string | number;
   name: string;
   age: number;
   image: string;

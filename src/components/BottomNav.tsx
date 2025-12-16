@@ -10,7 +10,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { icon: MapPin, label: "Nearby", path: "/" },
+  { icon: MapPin, label: "Nearby", path: "/nearby" },
   { icon: Zap, label: "Encounters", path: "/encounters" },
   { icon: Heart, label: "Likes", path: "/likes", badge: 0 },
   { icon: MessageCircle, label: "Chats", path: "/chats", badge: 2 },
