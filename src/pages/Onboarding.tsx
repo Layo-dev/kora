@@ -209,7 +209,7 @@ export default function Onboarding() {
       if (profileError) throw profileError;
 
       toast({ title: "Profile created successfully!" });
-      navigate("/app");
+      navigate("/encounters");
     } catch (error: any) {
       console.error("Onboarding error:", error);
       toast({ 
@@ -383,7 +383,7 @@ export default function Onboarding() {
             <div>
               <h1 className="text-2xl font-bold text-foreground">Add your first 2 photos</h1>
               <p className="text-muted-foreground mt-2">
-                Conversation starters make it easy! Let's see you with pets, great food, or on a trip. 👩🌴🎉
+                Conversation starters make it easy! Let's see you with pets, great food, or on a trip.
               </p>
             </div>
 
