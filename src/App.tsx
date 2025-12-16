@@ -7,6 +7,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Nearby from "./pages/Nearby";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 import Encounters from "./pages/Encounters";
 import Likes from "./pages/Likes";
 import Chats from "./pages/Chats";
@@ -254,6 +255,16 @@ const AppRoutes = () => (
         <ProtectedRoute>
           <OnboardingGuard>
             <Profile />
+          </OnboardingGuard>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/edit-profile"
+      element={
+        <ProtectedRoute>
+          <OnboardingGuard>
+            <EditProfile />
           </OnboardingGuard>
         </ProtectedRoute>
       }
