@@ -162,43 +162,85 @@ export type Database = {
           age: number | null
           avatar_url: string | null
           bio: string | null
+          children: string | null
           created_at: string | null
+          drinking: string | null
+          education: string | null
+          education_level: string | null
           full_name: string | null
           gender: string | null
+          height: number | null
           id: string
           intent: string | null
           interests: string[] | null
+          languages: string[] | null
           location: string | null
           onboarding_complete: boolean | null
+          personality: string | null
+          pets: string | null
+          relationship_status: string | null
+          religion: string | null
+          sexuality: string | null
+          smoking: string | null
+          star_sign: string | null
           username: string | null
+          work: string | null
         }
         Insert: {
           age?: number | null
           avatar_url?: string | null
           bio?: string | null
+          children?: string | null
           created_at?: string | null
+          drinking?: string | null
+          education?: string | null
+          education_level?: string | null
           full_name?: string | null
           gender?: string | null
+          height?: number | null
           id: string
           intent?: string | null
           interests?: string[] | null
+          languages?: string[] | null
           location?: string | null
           onboarding_complete?: boolean | null
+          personality?: string | null
+          pets?: string | null
+          relationship_status?: string | null
+          religion?: string | null
+          sexuality?: string | null
+          smoking?: string | null
+          star_sign?: string | null
           username?: string | null
+          work?: string | null
         }
         Update: {
           age?: number | null
           avatar_url?: string | null
           bio?: string | null
+          children?: string | null
           created_at?: string | null
+          drinking?: string | null
+          education?: string | null
+          education_level?: string | null
           full_name?: string | null
           gender?: string | null
+          height?: number | null
           id?: string
           intent?: string | null
           interests?: string[] | null
+          languages?: string[] | null
           location?: string | null
           onboarding_complete?: boolean | null
+          personality?: string | null
+          pets?: string | null
+          relationship_status?: string | null
+          religion?: string | null
+          sexuality?: string | null
+          smoking?: string | null
+          star_sign?: string | null
           username?: string | null
+          work?: string | null
         }
         Relationships: []
       }
