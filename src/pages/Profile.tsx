@@ -12,6 +12,11 @@ import chatIcon from "@/assets/chat-Icon.svg";
 import relationshipIcon from "@/assets/relationship-icon.svg";
 
 type ProfileRow = Tables<"profiles">;
+interface Photo {
+  id: string;
+  photo_url: string;
+  is_primary: boolean;
+}
 
 const intentMeta: Record<string, { icon: string; label: string }> = {
   dating: { icon: relationshipIcon, label: "Here to date" },
@@ -23,6 +28,7 @@ const defaultIntent = intentMeta.dating;
 const Profile = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileRow | null>(null);
+  const [photos, setPhotos] = useState<Photo[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -44,22 +50,33 @@ const Profile = () => {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userData.user.id)
-        .maybeSingle();
+      const [profileRes, photosRes] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", userData.user.id)
+          .maybeSingle(),
+        supabase
+          .from("photos")
+          .select("*")
+          .eq("user_id", userData.user.id)
+          .order("is_primary", { ascending: false }),
+      ]);
 
       if (!isMounted) return;
 
-      if (error) {
+      if (profileRes.error) {
         toast({
           title: "Couldn't load profile",
-          description: error.message,
+          description: profileRes.error.message,
           variant: "destructive",
         });
       } else {
-        setProfile(data);
+        setProfile(profileRes.data);
+      }
+
+      if (photosRes.data) {
+        setPhotos(photosRes.data as Photo[]);
       }
 
     };
@@ -70,9 +87,29 @@ const Profile = () => {
     };
   }, [navigate]);
 
+  const calculateCompletion = () => {
+    if (!profile) return 0;
+    const fields = [
+      profile.full_name,
+      profile.bio,
+      profile.gender,
+      profile.intent,
+      profile.work,
+      profile.education,
+      profile.relationship_status,
+      profile.sexuality,
+      profile.smoking,
+      profile.drinking,
+      photos.length > 0,
+    ];
+    const filled = fields.filter(Boolean).length;
+    return Math.round((filled / fields.length) * 100);
+  };
+
   if (!profile) return null;
 
   const currentIntent = profile.intent && intentMeta[profile.intent] ? intentMeta[profile.intent] : defaultIntent;
+  const completionPercentage = calculateCompletion();
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -109,7 +146,7 @@ const Profile = () => {
               />
             </div>
             <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs font-bold border-2 border-background">
-              13%
+              {completionPercentage}%
             </div>
           </div>
           <div className="flex-1 pt-2">
