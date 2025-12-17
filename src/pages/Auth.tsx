@@ -43,7 +43,7 @@ const Auth = () => {
       .maybeSingle();
     
     if (profile?.onboarding_complete) {
-      navigate("/app");
+      navigate("/encounters");
     } else {
       navigate("/onboarding");
     }
