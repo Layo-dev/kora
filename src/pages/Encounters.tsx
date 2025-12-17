@@ -194,19 +194,19 @@ const Encounters = () => {
           .maybeSingle();
 
         if (mutualLike) {
-          // MATCH! Create match record
+          // MATCH! Create match record via Edge Function
           // Ensure consistent ordering: user1 < user2
           const [user1, user2] = 
             currentUserId < currentProfile.id
               ? [currentUserId, currentProfile.id]
               : [currentProfile.id, currentUserId];
 
-          const { error: matchError } = await supabase
-            .from("matches")
-            .insert({
+          const { error: matchError } = await supabase.functions.invoke("create-match", {
+            body: {
               user1,
               user2,
-            });
+            },
+          });
 
           if (matchError) {
             console.error("Error creating match:", matchError);

@@ -187,57 +187,36 @@ const Likes = () => {
         }
       }
 
-      // Check if match already exists
+      // Create match via Edge Function (handles RLS and duplicates)
       const [user1, user2] =
         currentUserId < likerId
           ? [currentUserId, likerId]
           : [likerId, currentUserId];
 
-      const { data: existingMatch } = await supabase
-        .from("matches")
-        .select("id")
-        .eq("user1", user1)
-        .eq("user2", user2)
-        .maybeSingle();
+      const { data: matchData, error: matchError } = await supabase.functions.invoke("create-match", {
+        body: {
+          user1,
+          user2,
+        },
+      });
 
-      if (existingMatch) {
+      if (matchError) {
+        console.error("Error creating match:", matchError);
+        toast({
+          title: "Error",
+          description: `Failed to create match: ${matchError.message}`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (matchData?.alreadyExists) {
         // Match already exists, just remove from list
         setLikes((prev) => prev.filter((l) => l.id !== likeId));
         toast({
           title: "Already Matched! 💜",
           description: `You and ${likerName} are already matched!`,
           duration: 3000,
-        });
-        return;
-      }
-
-      // Create match record
-      const { error: matchError } = await supabase
-        .from("matches")
-        .insert({
-          user1,
-          user2,
-        });
-
-      if (matchError) {
-        console.error("Error creating match:", matchError);
-        
-        // Check if it's a duplicate match error
-        if (matchError.code === "23505" || matchError.message.includes("duplicate")) {
-          // Match already exists, just remove from list
-          setLikes((prev) => prev.filter((l) => l.id !== likeId));
-          toast({
-            title: "Already Matched! 💜",
-            description: `You and ${likerName} are already matched!`,
-            duration: 3000,
-          });
-          return;
-        }
-        
-        toast({
-          title: "Error",
-          description: `Failed to create match: ${matchError.message}`,
-          variant: "destructive",
         });
         return;
       }
