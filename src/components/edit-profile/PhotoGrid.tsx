@@ -55,6 +55,27 @@ export const PhotoGrid = ({ photos, userId, onPhotosChange }: PhotoGridProps) =>
 
         if (insertError) throw insertError;
 
+        // After upload, recompute primary photo and sync profile avatar_url
+        try {
+          const { data: updatedPhotos } = await supabase
+            .from("photos")
+            .select("*")
+            .eq("user_id", userId)
+            .order("is_primary", { ascending: false });
+
+          if (updatedPhotos && updatedPhotos.length > 0) {
+            const primary =
+              updatedPhotos.find((p: any) => p.is_primary) ?? updatedPhotos[0];
+
+            await supabase
+              .from("profiles")
+              .update({ avatar_url: primary.photo_url })
+              .eq("id", userId);
+          }
+        } catch (syncError) {
+          console.error("Failed to sync avatar_url after upload", syncError);
+        }
+
         toast({ title: "Photo uploaded successfully" });
         onPhotosChange();
       } catch (error: any) {
@@ -81,6 +102,46 @@ export const PhotoGrid = ({ photos, userId, onPhotosChange }: PhotoGridProps) =>
 
       const { error } = await supabase.from("photos").delete().eq("id", photoId);
       if (error) throw error;
+
+      // After delete, recompute primary photo and sync profile avatar_url
+      try {
+        const { data: remaining } = await supabase
+          .from("photos")
+          .select("*")
+          .eq("user_id", userId)
+          .order("is_primary", { ascending: false });
+
+        if (!remaining || remaining.length === 0) {
+          // No photos left → clear avatar_url
+          await supabase
+            .from("profiles")
+            .update({ avatar_url: null })
+            .eq("id", userId);
+        } else {
+          let primary =
+            remaining.find((p: any) => p.is_primary) ?? remaining[0];
+
+          // Ensure exactly one primary
+          if (!primary.is_primary) {
+            await supabase
+              .from("photos")
+              .update({ is_primary: false })
+              .eq("user_id", userId);
+
+            await supabase
+              .from("photos")
+              .update({ is_primary: true })
+              .eq("id", primary.id);
+          }
+
+          await supabase
+            .from("profiles")
+            .update({ avatar_url: primary.photo_url })
+            .eq("id", userId);
+        }
+      } catch (syncError) {
+        console.error("Failed to sync avatar_url after delete", syncError);
+      }
 
       toast({ title: "Photo deleted" });
       onPhotosChange();
