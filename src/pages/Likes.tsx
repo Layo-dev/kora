@@ -146,33 +146,72 @@ const Likes = () => {
   };
 
   const handleLike = async (likeId: string, likerId: string, likerName: string) => {
-    if (!currentUserId) return;
+    if (!currentUserId || !likerId) return;
 
     try {
-      // Create a like back (mutual like = match)
-      const { error: likeError } = await supabase
+      // Check if like already exists (prevent duplicate)
+      const { data: existingLike } = await supabase
         .from("likes")
-        .insert({
-          liker_id: currentUserId,
-          liked_id: likerId,
-        });
+        .select("id")
+        .eq("liker_id", currentUserId)
+        .eq("liked_id", likerId)
+        .maybeSingle();
 
-      if (likeError) {
-        console.error("Error creating like:", likeError);
-        toast({
-          title: "Error",
-          description: "Failed to like back. Please try again.",
-          variant: "destructive",
-        });
-        return;
+      if (existingLike) {
+        // Like already exists, proceed to match creation
+        console.log("Like already exists, proceeding to match");
+      } else {
+        // Create a like back (mutual like = match)
+        const { error: likeError } = await supabase
+          .from("likes")
+          .insert({
+            liker_id: currentUserId,
+            liked_id: likerId,
+          });
+
+        if (likeError) {
+          console.error("Error creating like:", likeError);
+          
+          // Check if it's a duplicate error (unique constraint violation)
+          if (likeError.code === "23505" || likeError.message.includes("duplicate")) {
+            // Like already exists, proceed to match creation
+            console.log("Duplicate like detected, proceeding to match");
+          } else {
+            toast({
+              title: "Error",
+              description: `Failed to like back: ${likeError.message}`,
+              variant: "destructive",
+            });
+            return;
+          }
+        }
       }
 
-      // Since they already liked us, this is a match!
+      // Check if match already exists
       const [user1, user2] =
         currentUserId < likerId
           ? [currentUserId, likerId]
           : [likerId, currentUserId];
 
+      const { data: existingMatch } = await supabase
+        .from("matches")
+        .select("id")
+        .eq("user1", user1)
+        .eq("user2", user2)
+        .maybeSingle();
+
+      if (existingMatch) {
+        // Match already exists, just remove from list
+        setLikes((prev) => prev.filter((l) => l.id !== likeId));
+        toast({
+          title: "Already Matched! 💜",
+          description: `You and ${likerName} are already matched!`,
+          duration: 3000,
+        });
+        return;
+      }
+
+      // Create match record
       const { error: matchError } = await supabase
         .from("matches")
         .insert({
@@ -182,7 +221,25 @@ const Likes = () => {
 
       if (matchError) {
         console.error("Error creating match:", matchError);
-        // Still show match toast even if DB insert fails
+        
+        // Check if it's a duplicate match error
+        if (matchError.code === "23505" || matchError.message.includes("duplicate")) {
+          // Match already exists, just remove from list
+          setLikes((prev) => prev.filter((l) => l.id !== likeId));
+          toast({
+            title: "Already Matched! 💜",
+            description: `You and ${likerName} are already matched!`,
+            duration: 3000,
+          });
+          return;
+        }
+        
+        toast({
+          title: "Error",
+          description: `Failed to create match: ${matchError.message}`,
+          variant: "destructive",
+        });
+        return;
       }
 
       // Remove from local state (it's now a match, not just a like)
@@ -194,11 +251,11 @@ const Likes = () => {
         description: `You and ${likerName} liked each other!`,
         duration: 5000,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Unexpected error:", error);
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description: error?.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
     }
