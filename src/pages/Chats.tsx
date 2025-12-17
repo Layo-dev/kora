@@ -160,8 +160,7 @@ const Chats = () => {
   }, [chatItems]);
 
   const handleOpenChat = (matchId: string) => {
-    // TODO: navigate to chat detail route once implemented
-    console.log("Open chat for match:", matchId);
+    navigate(`/chats/${matchId}`);
   };
 
   return (

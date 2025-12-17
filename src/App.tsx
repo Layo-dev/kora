@@ -11,6 +11,7 @@ import EditProfile from "./pages/EditProfile";
 import Encounters from "./pages/Encounters";
 import Likes from "./pages/Likes";
 import Chats from "./pages/Chats";
+import ChatDetail from "./pages/ChatDetail";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
@@ -245,6 +246,16 @@ const AppRoutes = () => (
         <ProtectedRoute>
           <OnboardingGuard>
             <Chats />
+          </OnboardingGuard>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/chats/:matchId"
+      element={
+        <ProtectedRoute>
+          <OnboardingGuard>
+            <ChatDetail />
           </OnboardingGuard>
         </ProtectedRoute>
       }
