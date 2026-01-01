@@ -16,7 +16,7 @@ const ChatDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [input, setInput] = useState("");
-  const [otherUser, setOtherUser] = useState<ProfileRow | null>(null);
+  const [otherUser, setOtherUser] = useState<Pick<ProfileRow, 'id' | 'full_name' | 'avatar_url'> | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, loading, sending, hasMore, sendMessage, loadMore } =

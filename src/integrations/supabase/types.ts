@@ -20,18 +20,21 @@ export type Database = {
           id: string
           liked_id: string | null
           liker_id: string | null
+          type: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
           liked_id?: string | null
           liker_id?: string | null
+          type?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
           liked_id?: string | null
           liker_id?: string | null
+          type?: string | null
         }
         Relationships: [
           {
@@ -55,19 +58,25 @@ export type Database = {
           created_at: string | null
           id: string
           user1: string | null
+          user1_last_read_at: string | null
           user2: string | null
+          user2_last_read_at: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
           user1?: string | null
+          user1_last_read_at?: string | null
           user2?: string | null
+          user2_last_read_at?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
           user1?: string | null
+          user1_last_read_at?: string | null
           user2?: string | null
+          user2_last_read_at?: string | null
         }
         Relationships: [
           {
@@ -288,7 +297,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      handle_like: {
+        Args: { liked: string; liker: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
