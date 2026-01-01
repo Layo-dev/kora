@@ -26,21 +26,23 @@ export async function sendChatMessage(matchId: string, content: string) {
     throw new Error("Message cannot be empty");
   }
 
-  const { data, error } = await supabase.functions.invoke("send-message", {
-    body: {
+  // Direct insert using RLS (policy: "participants can send messages")
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
       match_id: matchId,
       sender_id: user.id,
-      content,
-    },
-  });
+      content: content.trim(),
+    })
+    .select()
+    .single();
 
   if (error) {
-    console.error("send-message edge function error:", error);
+    console.error("send message error:", error);
     throw new Error(error.message ?? "Failed to send message");
   }
 
-  // Edge function returns: { success: true, message }
-  return (data as { success: boolean; message: MessageRow }).message;
+  return data as MessageRow;
 }
 
 /**
@@ -54,23 +56,23 @@ export async function fetchMessagesPage(
   pageSize: number,
 ): Promise<PaginatedMessages> {
   const offset = page * pageSize;
-  // Ask server for one extra record to determine if another page exists
+  // Ask for one extra record to determine if another page exists
   const limit = pageSize + 1;
 
-  const { data, error } = await supabase.functions.invoke("fetch-messages", {
-    body: {
-      match_id: matchId,
-      limit,
-      offset,
-    },
-  });
+  // Direct query using RLS (policy: "participants can read messages")
+  const { data, error } = await supabase
+    .from("messages")
+    .select("*")
+    .eq("match_id", matchId)
+    .order("created_at", { ascending: true })
+    .range(offset, offset + limit - 1);
 
   if (error) {
-    console.error("fetch-messages edge function error:", error);
+    console.error("fetch messages error:", error);
     throw new Error(error.message ?? "Failed to fetch messages");
   }
 
-  const messages = ((data as { messages: MessageRow[] } | null)?.messages ?? []) as MessageRow[];
+  const messages = (data ?? []) as MessageRow[];
 
   const hasMore = messages.length > pageSize;
   const pageMessages = hasMore ? messages.slice(0, pageSize) : messages;
